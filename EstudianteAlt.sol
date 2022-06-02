@@ -11,6 +11,7 @@ contract Estudiante
     string[] private keysMaterias;
     mapping(string =>uint) private notas_bimestres;
     string[] private keysBimestres;
+    mapping(address => bool) private docentesAutorizados ;
 
     constructor(string memory nombre_, string memory apellido_, string memory curso_)
     {
@@ -37,10 +38,10 @@ contract Estudiante
 
     function set_nota_materia(uint nota, string memory materia) public
     {
-        if(_docente == msg.sender && nota <=10 && nota >= 1)
+        require(_docente == msg.sender || docentesAutorizados[msg.sender], "Adress no autorizada");
+        if(nota <=10 && nota >= 1)
         {
             notas_materias[materia] = nota;
-
             keysMaterias.push(materia);
         }
     }
@@ -69,7 +70,8 @@ contract Estudiante
 
     function set_nota_bimestre(uint nota, string memory bimestre) public
     {
-        if (_docente == msg.sender&& nota <=10 && nota >= 1 && keysBimestres.length < 4)
+        require(_docente == msg.sender || docentesAutorizados[msg.sender], "Adress no autorizada");
+        if (nota <=10 && nota >= 1 && keysBimestres.length < 4)
         {
             notas_bimestres[bimestre] = nota;
             keysBimestres.push(bimestre);
@@ -81,9 +83,11 @@ contract Estudiante
         return notas_bimestres[bimestre];
     }
 
-    function autorizarDocente (address docenteAutorizado) public
+    function autorizarDocente (address docenteAutorizado_) public
     {
-        
+        if(_docente == msg.sender)
+        {
+            docentesAutorizados[docenteAutorizado_] = true;
+        }
     }
-
 }
