@@ -89,5 +89,15 @@ contract Estudiante
         {
             docentesAutorizados[docenteAutorizado_] = true;
         }
+        
+    }
+
+    function docente_esta_autorizado(address address_) public view returns (bool){
+        if (docentesAutorizados[address_]){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
